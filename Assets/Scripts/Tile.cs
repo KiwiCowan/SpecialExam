@@ -9,7 +9,12 @@ public class Tile : MonoBehaviour
 
     public Vector2Int pos;
     public char tileType;
-    SpriteRenderer renderer;
+    SpriteRenderer sRenderer;
+
+    public void Awake()
+    {
+        sRenderer = GetComponent<SpriteRenderer>();
+    }
 
     public void SetPos(int x, int y)
     {
@@ -19,17 +24,21 @@ public class Tile : MonoBehaviour
 
     public void SetType(char newTileType)
     {
-        if (tileType == newTileType)    // checks if the tile is the same type as player
+        if (newTileType == '.')    // checks if the tile is null
+        {
+            tileType = newTileType;
+        }
+        else if (tileType == newTileType)    // checks if the tile is the same type as player
         {
             return;
         }
         else if (tileType == '.')       //checks if empty
         {
             tileType = newTileType;
-            // renderer.material.SetColor(Color.blue)
+            // sRenderer.material.SetColor(Color.blue)
 
         }
-        else if (tileType == (newTileType == 'x' ? 'o' : 'x'))  //checks if the tile has been captured already set to solid
+        else if (newTileType == (tileType == 'x' ? 'o' : 'x'))  //checks if the tile has been captured already set to solid
         {
             tileType = newTileType == 'x' ? 'X' : 'O';
         }
@@ -38,27 +47,27 @@ public class Tile : MonoBehaviour
         {
             case '.':
                 {
-                    renderer.color = Color.white;
+                    sRenderer.color = Color.white;
                     break;
                 }
             case 'x':
                 {
-                    renderer.color = Color.magenta;
+                    sRenderer.color = Color.magenta;
                     break;
                 }
-            case '0':
+            case 'o':
                 {
-                    renderer.color = Color.cyan;
+                    sRenderer.color = Color.cyan;
                     break;
                 }
             case 'X':
                 {
-                    renderer.color = Color.red;
+                    sRenderer.color = Color.red;
                     break;
                 }
             case 'O':
                 {
-                    renderer.color = Color.blue;
+                    sRenderer.color = Color.blue;
                     break;
                 }
         }

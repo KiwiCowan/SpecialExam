@@ -6,24 +6,31 @@ public class GameManager : MonoBehaviour
 {
     public int width, height;
     GameState gameState;
-    GameBoard gameBoard;
+    public GameBoard gameBoard;
+
+    public char currentPlayer;
 
    
     void Awake()
     {
         gameState = new GameState(width, height);
-        fortiles = new Tile[,]
+        gameBoard.GenBoard(width, height);
+        currentPlayer = 'x';
+        Debug.Log(gameState.ToString());
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnEnable()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
         
+    }
+
+    void OnTileClicked(Vector2Int newPlayerPos)
+    {
+
     }
 }

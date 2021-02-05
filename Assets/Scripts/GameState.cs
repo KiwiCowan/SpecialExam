@@ -12,15 +12,16 @@ public class GameState
     Vector2Int p1Pos;   // x
     Vector2Int p2Pos;   // o
 
-    public char[,] Board { get => board;}
-    public Vector2Int P1Pos { get => p1Pos;}
-    public Vector2Int P2Pos { get => p2Pos;}
+    public char[,] Board { get => board; }
+    public Vector2Int P1Pos { get => p1Pos; }
+    public Vector2Int P2Pos { get => p2Pos; }
 
     public GameState(int _width, int _height)
     {
         this.height = _height;
         this.width = _width;
         this.board = new char[width, height];
+
         Reset();
 
     }
@@ -36,7 +37,21 @@ public class GameState
         {
             for (int w = 0; w < width; w++)
             {
-                board[w, h] = '.';
+                if (w == 0 && h == 0)
+                {
+                    board[w, h] = 'x';
+                    p1Pos = new Vector2Int(w, h);
+
+                }
+                else if (w == width - 1 && h == height - 1)
+                {
+                    board[w, h] = 'o';
+                    p2Pos = new Vector2Int(w, h);
+                }
+                else
+                {
+                    board[w, h] = '.';
+                }
             }
         }
     }
@@ -54,7 +69,7 @@ public class GameState
         int x = curPlayerPos.x;
         int y = curPlayerPos.y;
 
-        if (IsValidMove(x +1, y, curPlayer))    //Right
+        if (IsValidMove(x + 1, y, curPlayer))    //Right
         {
             possibleMoves.Add(new Vector2Int(x, y));
         }
@@ -62,11 +77,11 @@ public class GameState
         {
             possibleMoves.Add(new Vector2Int(x, y));
         }
-        if (IsValidMove(x -1, y, curPlayer))    //Left
+        if (IsValidMove(x - 1, y, curPlayer))    //Left
         {
             possibleMoves.Add(new Vector2Int(x, y));
         }
-        if (IsValidMove(x, y -1, curPlayer))    //Down
+        if (IsValidMove(x, y - 1, curPlayer))    //Down
         {
             possibleMoves.Add(new Vector2Int(x, y));
         }
@@ -94,7 +109,7 @@ public class GameState
 
     public void MakeMove(Vector2Int playerPos, char curPlayer)
     {
-        if(IsValidMove(playerPos.x, playerPos.y, curPlayer))
+        if (IsValidMove(playerPos.x, playerPos.y, curPlayer))
         {
             if (board[playerPos.x, playerPos.y] == GetNextPlayerChar(curPlayer))    //set the tile to solid if already captured
             {
@@ -118,5 +133,29 @@ public class GameState
     {
         char enemyTile = currPlayer == 'x' ? 'o' : 'x';
         return enemyTile;
+    }
+
+    public override string ToString()
+    {
+        string gameStateInfo = ("GameState Debug: " + "\n");
+        string playersPos = ("P1pos: " + p1Pos + "\n" + "P2pos: " + p2Pos);
+        string boardInfo = ("Board: (" + width + "," + height + ")" + "\n");
+
+        
+
+        for (int h = 0; h < board.GetLength(1); h++)    //Updates board by setting types
+        {
+            string boardChar = "";
+            for (int w = 0; w < board.GetLength(0); w++)
+            {
+                boardChar += board[w, h].ToString() + " ";
+            }
+            boardChar += "\n";
+            boardInfo += boardChar;
+
+        }
+
+        gameStateInfo += playersPos + "\n" + boardInfo;
+        return gameStateInfo;
     }
 }
