@@ -73,8 +73,8 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void OnMouseButtonDown()
-    {
+    private void OnMouseDown()
+    {        
         if (OnClicked != null)
         {
             OnClicked(pos);

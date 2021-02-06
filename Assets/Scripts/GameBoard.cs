@@ -6,7 +6,7 @@ public class GameBoard : MonoBehaviour
 {
     public GameObject prefab;
 
-    GameState gameState;
+    //GameState gameState;
     Tile[,] tiles;
 
     //public GameBoard(GameState _gameState)

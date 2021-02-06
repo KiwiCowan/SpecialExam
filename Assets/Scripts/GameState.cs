@@ -64,26 +64,31 @@ public class GameState
     public List<Vector2Int> GetPossibleMoves(char curPlayer)
     {
         List<Vector2Int> possibleMoves = new List<Vector2Int>();
-        Vector2Int curPlayerPos = curPlayer == 'x' ? p2Pos : p1Pos;
+
+        Vector2Int curPlayerPos = curPlayer == 'x' ? p1Pos : p2Pos;
 
         int x = curPlayerPos.x;
         int y = curPlayerPos.y;
+        Debug.Log("currPlayerPos: (" + x + "," + y + ")");
 
         if (IsValidMove(x + 1, y, curPlayer))    //Right
         {
-            possibleMoves.Add(new Vector2Int(x, y));
+            possibleMoves.Add(new Vector2Int(x + 1, y));
         }
+
         if (IsValidMove(x, y + 1, curPlayer))   //Up
         {
-            possibleMoves.Add(new Vector2Int(x, y));
+            possibleMoves.Add(new Vector2Int(x, y + 1));
         }
+
         if (IsValidMove(x - 1, y, curPlayer))    //Left
         {
-            possibleMoves.Add(new Vector2Int(x, y));
+            possibleMoves.Add(new Vector2Int(x - 1, y));
         }
+
         if (IsValidMove(x, y - 1, curPlayer))    //Down
         {
-            possibleMoves.Add(new Vector2Int(x, y));
+            possibleMoves.Add(new Vector2Int(x, y - 1));
         }
 
         return possibleMoves;
@@ -93,8 +98,9 @@ public class GameState
     public bool IsValidMove(int x, int y, char currPlayer)
     {
         //bool isValid = false;
-        if (x < 0 || x > width || y < 0 || y > height)
+        if (x < 0 || x >= width || y < 0 || y >= height)
         {
+            Debug.Log("IVM = false = " + x + "," + y);
             return false;
         }
         char enemyTile = currPlayer == 'x' ? 'o' : 'x';
