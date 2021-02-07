@@ -44,9 +44,9 @@ public class Tile : MonoBehaviour
             // sRenderer.material.SetColor(Color.blue)
 
         }
-        else if (tileType == (newTileType == 'x' ? 'o' : 'x'))  //checks if the tile has been captured already set to solid
+        else if (tileType == (newTileType == 'X' ? 'o' : 'x'))  //checks if the tile has been captured already set to solid
         {
-            tileType = newTileType == 'x' ? 'X' : 'O';
+            tileType = newTileType;
             Debug.Log("else if -> Tile -> " + tileType);
         }
 
