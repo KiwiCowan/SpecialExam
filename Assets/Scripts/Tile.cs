@@ -9,7 +9,7 @@ public class Tile : MonoBehaviour
     public static event Clicked OnClicked;
 
     public Vector2Int pos;
-    public char tileType;
+    public TileType tileType;
     SpriteRenderer sRenderer;
     TextMeshPro text;
 
@@ -29,28 +29,33 @@ public class Tile : MonoBehaviour
 
     public void SetType(char newTileType)
     {
-        //isHighlighed = false;
-        if (newTileType == '.')    // checks if the tile is null
-        {
-            tileType = newTileType;
-        }
-        else if (tileType == newTileType)    // checks if the tile is the same type as player
-        {
-            return;
-        }
-        else if (tileType == '.')       //checks if empty
-        {
-            tileType = newTileType;
-            // sRenderer.material.SetColor(Color.blue)
+        TileType newType = (TileType)newTileType;
 
-        }
-        else if (tileType == (newTileType == 'X' ? 'o' : 'x'))  //checks if the tile has been captured already set to solid
-        {
-            tileType = newTileType;
-            Debug.Log("else if -> Tile -> " + tileType);
-        }
-
+        tileType = newType;
         DrawTile();
+
+        //isHighlighed = false;
+        // if (newTileType == '.')    // checks if the tile is null
+        //{
+        //    tileType = newTileType;
+        //}
+        //else if (tileType == newTileType)    // checks if the tile is the same type as player
+        //{
+        //    return;
+        //}
+        //else if (tileType == '.')       //checks if empty
+        //{
+        //    tileType = newTileType;
+        //    // sRenderer.material.SetColor(Color.blue)
+
+        //}
+        //else if (tileType == (newTileType == 'X' ? 'o' : 'x'))  //checks if the tile has been captured already set to solid
+        //{
+        //    tileType = newTileType;
+        //    Debug.Log("else if -> Tile -> " + tileType);
+        //}
+
+        //DrawTile();
 
         //switch (tileType)
         //{
@@ -89,37 +94,37 @@ public class Tile : MonoBehaviour
 
     public void HighlightTile()
     {
-        Debug.Log("hightlight tile " + pos.x + "," + pos.y);
+        //Debug.Log("hightlight tile " + pos.x + "," + pos.y);
         // isHighlighed = true;        
         //sRenderer.color = Color.clear;
         DrawTile();
         switch (tileType)
         {
-            case '.':
+            case TileType.EMPTY:
                 {
                     sRenderer.color = Color.grey;
                     break;
                 }
-            case 'x':
+            case TileType.P1:
                 {
                     sRenderer.color = Color.magenta;
                     break;
                 }
-            case 'o':
+            case TileType.P2:
                 {
                     sRenderer.color = Color.cyan;
                     break;
                 }
-            case 'X':
-                {
-                    sRenderer.color = Color.magenta;
-                    break;
-                }
-            case 'O':
-                {
-                    sRenderer.color = Color.cyan;
-                    break;
-                }
+            //case TileType.P1_SOILD:
+            //    {
+            //        sRenderer.color = Color.magenta;
+            //        break;
+            //    }
+            //case TileType.P2_SOILD:
+            //    {
+            //        sRenderer.color = Color.cyan;
+            //        break;
+            //    }
         }
     }
 
@@ -128,31 +133,31 @@ public class Tile : MonoBehaviour
         text.color = Color.black;
         switch (tileType)
         {
-            case '.':
+            case TileType.EMPTY:
                 {
                     text.text = "";
                     sRenderer.color = Color.white;
                     break;
                 }
-            case 'x':
+            case TileType.P1:
                 {
                     text.text = "x";
                     sRenderer.color = Color.red;
                     break;
                 }
-            case 'o':
+            case TileType.P2:
                 {
                     text.text = "o";
                     sRenderer.color = Color.blue;
                     break;
                 }
-            case 'X':
+            case TileType.P1_SOILD:
                 {
                     text.text = "X";
                     sRenderer.color = Color.red;
                     break;
                 }
-            case 'O':
+            case TileType.P2_SOILD:
                 {
                     text.text = "O";
                     sRenderer.color = Color.blue;
@@ -179,6 +184,15 @@ public class Tile : MonoBehaviour
         }
         //isHighlighed = false;
     }
+}
+
+public enum TileType
+{
+    EMPTY = '.',
+    P1 = 'x',
+    P2 = 'o',
+    P1_SOILD = 'X',
+    P2_SOILD = 'O'
 }
 
 

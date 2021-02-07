@@ -10,11 +10,11 @@ public class GameManager : MonoBehaviour
 
     GameState gameState;
     GameBoard gameBoard;
-    
+
     public char currentPlayer;
 
     private char humanPlayer = 'x';
-    //private bool isHotseat = true;
+    private bool isEndGame = false;
 
 
     void Awake()
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
         // X always is player1
         currentPlayer = 'x';
-                
+
         Debug.Log(gameState.ToString());
 
         if (opponentType != OpponentType.HUMAN)
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
             if (humanPlayer == 'o')     // checks if the AI is playing first
             {
                 //StartCoroutine(AiTurn());
-                
+
             }
         }
     }
@@ -49,13 +49,6 @@ public class GameManager : MonoBehaviour
         //HumanTurn();
     }
 
-    //void Player1()
-    //{
-    //    if (currentPlayer = humanPlayer)
-    //    {
-
-    //    }
-    //}
 
     private void OnEnable()
     {
@@ -70,52 +63,66 @@ public class GameManager : MonoBehaviour
 
     void OnTileClicked(Vector2Int newPlayerPos)
     {
-        if (opponentType != OpponentType.HUMAN) // check if playing with an AI
+        if (!isEndGame)
         {
-            if (currentPlayer != humanPlayer)   //check if its not the players turn
+            if (opponentType != OpponentType.HUMAN) // check if playing with an AI
             {
-                return;
+                if (currentPlayer != humanPlayer)   //check if its not the players turn
+                {
+                    return;
+                }
+            }
+
+            //if (!gameState.GetPossibleMoves(currentPlayer).Contains(newPlayerPos))
+            //{
+            //    return;
+            //}
+
+            //update the GameState
+            if (gameState.MakeMove(newPlayerPos, currentPlayer)) //Returns true if legal an places move on board
+            {
+                Debug.Log("Tile clicked at: " + newPlayerPos.x + "," + newPlayerPos.y + " -> " + currentPlayer);
+                //update the GameBoard
+                
+                char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
+                gameBoard.UpdateBoard(gameState, nextPlayer);
+                gameUI.UpdateUI(gameState, nextPlayer);
+                Debug.Log(gameState.ToString());
+                currentPlayer = nextPlayer;
+
+                // Check if the game is over
+                if (gameState.IsGameOver())
+                {
+                    Debug.Log("isGameOver == True");
+                    GameOver();
+                    return;
+                }
             }
         }
-
-        //if (!gameState.GetPossibleMoves(currentPlayer).Contains(newPlayerPos))
-        //{
-        //    return;
-        //}
-
-        //update the GameState
-        if(gameState.MakeMove(newPlayerPos, currentPlayer)) //Returns true if legal an places move on board
-        {
-            Debug.Log("Tile clicked at: " + newPlayerPos.x + "," + newPlayerPos.y + " -> " + currentPlayer);
-            //update the GameBoard
-            char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
-            gameBoard.UpdateBoard(gameState, nextPlayer);
-            gameUI.UpdateUI(gameState, nextPlayer);
-            Debug.Log(gameState.ToString());
-            currentPlayer = nextPlayer;
-        }
-
-        
-
-        
-
-
     }
 
-    void HumanTurn()
+    public void GameOver()
     {
-       //gameBoard.UpdateBoard(gameState, currentPlayer);
+        isEndGame = true;
+        string outcomeString = "";
 
-        //List<Vector2Int> possibleMoves = gameState.GetPossibleMoves(currentPlayer);
+        // find who won, loss or drawed
+        char outcomeChar = gameState.GetGameOutcome();
+        if (outcomeChar == 'x')
+        {
+            outcomeString = "X wins";
+        }
+        else if (outcomeChar == 'o')
+        {
+            outcomeString = "O wins";
+        }
+        else if (outcomeChar == 'd')
+        {
+            outcomeString = "Draw";
+        }
 
-        //string pMovesString = "Possible moves are: ";
-        //foreach (Vector2Int move in possibleMoves)
-        //{
-        //    pMovesString += "(" + move.x + "," + move.y + ")" + "\n";
-        //}
-        //Debug.Log("Player " + currentPlayer + ": can move to " + pMovesString);
-
-
+        // show victory screen
+        gameUI.GameOverUI(outcomeString);
     }
 }
 

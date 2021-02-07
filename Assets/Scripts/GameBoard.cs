@@ -58,7 +58,7 @@ public class GameBoard : MonoBehaviour
             {
                 
                 tiles[w, h].SetType(gameState.Board[w, h]);
-                Debug.Log("Tile " + w + "," + h + " GB-Type = " + gameState.Board[w, h] + " Tile-Type = " + tiles[w, h].tileType);
+                //Debug.Log("Tile " + w + "," + h + " GB-Type = " + gameState.Board[w, h] + " Tile-Type = " + tiles[w, h].tileType);
 
                 //Vector2Int temp = new Vector2Int(w, h);
                 //if(possibleMoves.Contains(temp))
