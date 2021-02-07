@@ -33,7 +33,7 @@ public class GameBoard : MonoBehaviour
                 if (x == 0 && y==0)
                 {
                     tile.SetType('x');
-                    Debug.Log(tile.tileType);
+                    //Debug.Log(tile.tileType);
                 }
                 else if (x == width -1 && y == height - 1)
                 {
@@ -47,15 +47,18 @@ public class GameBoard : MonoBehaviour
 
     public void UpdateBoard(GameState _gameState, char currentPlayer)
     {
-        GameState gameState = _gameState;
-
+        GameState gameState = _gameState;        
         List<Vector2Int> possibleMoves = gameState.GetPossibleMoves(currentPlayer);
 
+       
+        
         for (int h = 0; h < tiles.GetLength(1); h++)    //Updates board by setting types
         {
             for (int w = 0; w < tiles.GetLength(0); w++)
             {
+                
                 tiles[w, h].SetType(gameState.Board[w, h]);
+                Debug.Log("Tile " + w + "," + h + " GB-Type = " + gameState.Board[w, h] + " Tile-Type = " + tiles[w, h].tileType);
 
                 //Vector2Int temp = new Vector2Int(w, h);
                 //if(possibleMoves.Contains(temp))
@@ -64,14 +67,24 @@ public class GameBoard : MonoBehaviour
                 //}
             }
         }
+        foreach (Tile tile in tiles)
+        {
+            tile.DrawTile();
+        }
 
-
-        string pMovesString = "Possible moves are: ";
+        string pMovesString = "Player " + currentPlayer + ": can move to ";
         foreach (Vector2Int move in possibleMoves)
         {
             tiles[move.x, move.y].HighlightTile();
             pMovesString += "(" + move.x + "," + move.y + ")" + "\n";
         }
-        Debug.Log("Player " + currentPlayer + ": can move to " + pMovesString);
+        Debug.Log(pMovesString);
+        
+        Vector2Int curPlayerPos = currentPlayer == 'x' ? gameState.P1Pos : gameState.P2Pos;
+
+        int x = curPlayerPos.x;
+        int y = curPlayerPos.y;
+
+        tiles[x, y].CurrentTile();
     }
 }

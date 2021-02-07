@@ -71,9 +71,9 @@ public class GameState
         int y = curPlayerPos.y;
         Debug.Log("currPlayerPos: (" + x + "," + y + ")");
 
-        char enemyTile = curPlayer == 'x' ? 'o' : 'x';
+        //char enemyTile = curPlayer == 'x' ? 'o' : 'x';
 
-        if (IsValidMove(x + 1, y, curPlayer) && board[x, y] == enemyTile)    //Right
+        if (IsValidMove(x + 1, y, curPlayer) /*&& board[x, y] == enemyTile*/)    //Right
         {
             possibleMoves.Add(new Vector2Int(x + 1, y));
         }
@@ -100,7 +100,7 @@ public class GameState
     public bool IsValidMove(int x, int y, char currPlayer)
     {
         //bool isValid = false;
-        if (x < 0 || x >= width || y < 0 || y >= height || board[x, y] == 'O' || board[x, y] == 'X')
+        if (x < 0 || x >= width || y < 0 || y >= height)
         {
             //Debug.Log("IVM = false = " + x + "," + y);
             return false;
@@ -132,6 +132,8 @@ public class GameState
             {
                 board[playerPos.x, playerPos.y] = curPlayer;    //sets char
             }
+                
+            
 
             if (curPlayer == 'x')
             {

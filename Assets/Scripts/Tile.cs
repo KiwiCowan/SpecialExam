@@ -34,10 +34,10 @@ public class Tile : MonoBehaviour
         {
             tileType = newTileType;
         }
-        //else if (tileType == newTileType)    // checks if the tile is the same type as player
-        //{
-        //    return;
-        //}
+        else if (tileType == newTileType)    // checks if the tile is the same type as player
+        {
+            return;
+        }
         else if (tileType == '.')       //checks if empty
         {
             tileType = newTileType;
@@ -47,6 +47,7 @@ public class Tile : MonoBehaviour
         else if (tileType == (newTileType == 'x' ? 'o' : 'x'))  //checks if the tile has been captured already set to solid
         {
             tileType = newTileType == 'x' ? 'X' : 'O';
+            Debug.Log("else if -> Tile -> " + tileType);
         }
 
         DrawTile();
@@ -122,8 +123,9 @@ public class Tile : MonoBehaviour
         }
     }
 
-    private void DrawTile()
+    public void DrawTile()
     {
+        text.color = Color.black;
         switch (tileType)
         {
             case '.':
@@ -157,6 +159,11 @@ public class Tile : MonoBehaviour
                     break;
                 }
         }
+    }
+
+    public void CurrentTile()
+    {
+        text.color = Color.white;
     }
 
     private void OnMouseDown()

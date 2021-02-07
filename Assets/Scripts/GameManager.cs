@@ -78,15 +78,15 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (!gameState.GetPossibleMoves(currentPlayer).Contains(newPlayerPos))
-        {
-            return;
-        }
+        //if (!gameState.GetPossibleMoves(currentPlayer).Contains(newPlayerPos))
+        //{
+        //    return;
+        //}
 
         //update the GameState
         if(gameState.MakeMove(newPlayerPos, currentPlayer)) //Returns true if legal an places move on board
         {
-            Debug.Log("Tile clicked at: " + newPlayerPos.x + "," + newPlayerPos.y);
+            Debug.Log("Tile clicked at: " + newPlayerPos.x + "," + newPlayerPos.y + " -> " + currentPlayer);
             //update the GameBoard
             char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
             gameBoard.UpdateBoard(gameState, nextPlayer);
