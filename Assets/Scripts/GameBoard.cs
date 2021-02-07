@@ -45,16 +45,33 @@ public class GameBoard : MonoBehaviour
         }
     }
 
-    void UpdateBoard(GameState _gameState)
+    public void UpdateBoard(GameState _gameState, char currentPlayer)
     {
         GameState gameState = _gameState;
+
+        List<Vector2Int> possibleMoves = gameState.GetPossibleMoves(currentPlayer);
 
         for (int h = 0; h < tiles.GetLength(1); h++)    //Updates board by setting types
         {
             for (int w = 0; w < tiles.GetLength(0); w++)
             {
                 tiles[w, h].SetType(gameState.Board[w, h]);
+
+                //Vector2Int temp = new Vector2Int(w, h);
+                //if(possibleMoves.Contains(temp))
+                //{
+                //    tiles[w, h].HighlightTile();
+                //}
             }
         }
+
+
+        string pMovesString = "Possible moves are: ";
+        foreach (Vector2Int move in possibleMoves)
+        {
+            tiles[move.x, move.y].HighlightTile();
+            pMovesString += "(" + move.x + "," + move.y + ")" + "\n";
+        }
+        Debug.Log("Player " + currentPlayer + ": can move to " + pMovesString);
     }
 }

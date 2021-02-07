@@ -71,7 +71,9 @@ public class GameState
         int y = curPlayerPos.y;
         Debug.Log("currPlayerPos: (" + x + "," + y + ")");
 
-        if (IsValidMove(x + 1, y, curPlayer))    //Right
+        char enemyTile = curPlayer == 'x' ? 'o' : 'x';
+
+        if (IsValidMove(x + 1, y, curPlayer) && board[x, y] == enemyTile)    //Right
         {
             possibleMoves.Add(new Vector2Int(x + 1, y));
         }
@@ -98,12 +100,17 @@ public class GameState
     public bool IsValidMove(int x, int y, char currPlayer)
     {
         //bool isValid = false;
-        if (x < 0 || x >= width || y < 0 || y >= height)
+        if (x < 0 || x >= width || y < 0 || y >= height || board[x, y] == 'O' || board[x, y] == 'X')
         {
-            Debug.Log("IVM = false = " + x + "," + y);
+            //Debug.Log("IVM = false = " + x + "," + y);
             return false;
         }
+
         char enemyTile = currPlayer == 'x' ? 'o' : 'x';
+        //if ( board[x, y] == enemyTile ? ')
+        //{
+        //    //(currPlayer == 'x' ? p1Pos : p2Pos) == new Vector2Int(x, y) ||
+        //}
 
         if (board[x, y] == '.' || board[x, y] == currPlayer || board[x, y] == enemyTile)
         {
@@ -113,16 +120,18 @@ public class GameState
         return false;
     }
 
-    public void MakeMove(Vector2Int playerPos, char curPlayer)
+    public bool MakeMove(Vector2Int playerPos, char curPlayer)
     {
         if (IsValidMove(playerPos.x, playerPos.y, curPlayer))
         {
             if (board[playerPos.x, playerPos.y] == GetNextPlayerChar(curPlayer))    //set the tile to solid if already captured
             {
-                board[playerPos.x, playerPos.y] = curPlayer == 'x' ? 'O' : 'X';
+                board[playerPos.x, playerPos.y] = curPlayer == 'x' ? 'X' : 'O';
             }
-
-            board[playerPos.x, playerPos.y] = curPlayer;    //sets char
+            else
+            {
+                board[playerPos.x, playerPos.y] = curPlayer;    //sets char
+            }
 
             if (curPlayer == 'x')
             {
@@ -132,7 +141,9 @@ public class GameState
             {
                 p2Pos = playerPos;
             }
+            return true;
         }
+        return false;
     }
 
     public char GetNextPlayerChar(char currPlayer)
