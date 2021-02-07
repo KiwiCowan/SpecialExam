@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     GameState gameState;
     GameBoard gameBoard;
+    Evaluator evaluator = new Evaluator();
+    AIPlayer aiPlayer;
 
     public char currentPlayer;
 
@@ -32,7 +34,7 @@ public class GameManager : MonoBehaviour
 
         if (opponentType != OpponentType.HUMAN)
         {
-            // InitializeAIPlayer()
+            InitializeAIPlayer();
 
             if (humanPlayer == 'o')     // checks if the AI is playing first
             {
@@ -49,6 +51,25 @@ public class GameManager : MonoBehaviour
         //HumanTurn();
     }
 
+    void InitializeAIPlayer()
+    {
+        switch (opponentType)
+        {
+            case OpponentType.DUMB_AI:
+                {
+                    aiPlayer = new AIDumb();
+                    break;
+                }                
+            case OpponentType.MINIMAX_AI:
+                {
+                    break;
+                }
+            case OpponentType.NEURAL_NETWORK_AI:
+                {
+                    break;
+                }
+        }
+    }
 
     private void OnEnable()
     {
@@ -101,6 +122,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void AiTakeTurn()
+    {
+        Vector2Int bestMove = aiPlayer.GetMove(gameState, currentPlayer);
+
+        //if minimax doesn't work yet, we will place the symbol in next available spot.
+        if (bestMove == null)
+        {
+            Debug.Log("ERROR: best move is null.");
+        }
+
+        gameState.MakeMove(bestMove, currentPlayer);
+    }
+
     public void GameOver()
     {
         isEndGame = true;
@@ -123,6 +157,15 @@ public class GameManager : MonoBehaviour
 
         // show victory screen
         gameUI.GameOverUI(outcomeString);
+    }
+
+    IEnumerator AiThinking()
+    {
+        //aiThinkingUI.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        AiTakeTurn();
+        yield return null;
+        //aiThinkingUI.SetActive(false);
     }
 }
 
