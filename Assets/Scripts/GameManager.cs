@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
             if (humanPlayer == 'o')     // checks if the AI is playing first
             {
-                //StartCoroutine(AiTurn());
+                StartCoroutine(AiThinking());
 
             }
         }
@@ -103,22 +103,48 @@ public class GameManager : MonoBehaviour
             if (gameState.MakeMove(newPlayerPos, currentPlayer)) //Returns true if legal an places move on board
             {
                 Debug.Log("Tile clicked at: " + newPlayerPos.x + "," + newPlayerPos.y + " -> " + currentPlayer);
-                //update the GameBoard
+                NextTurn();
                 
-                char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
-                gameBoard.UpdateBoard(gameState, nextPlayer);
-                gameUI.UpdateUI(gameState, nextPlayer);
-                Debug.Log(gameState.ToString());
-                currentPlayer = nextPlayer;
+                ////update the GameBoard
+                
+                //char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
+                //gameBoard.UpdateBoard(gameState, nextPlayer);
+                //gameUI.UpdateUI(gameState, nextPlayer);
+                //Debug.Log(gameState.ToString());
+                //currentPlayer = nextPlayer;
 
-                // Check if the game is over
-                if (gameState.IsGameOver())
-                {
-                    Debug.Log("isGameOver == True");
-                    GameOver();
-                    return;
-                }
+                //// Check if the game is over
+                //if (gameState.IsGameOver())
+                //{
+                //    Debug.Log("isGameOver == True");
+                //    GameOver();
+                //    return;
+                //}
             }
+        }
+    }
+
+    void NextTurn()
+    {
+        //update the GameBoard
+        char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
+        gameBoard.UpdateBoard(gameState, nextPlayer);
+        gameUI.UpdateUI(gameState, nextPlayer);
+        Debug.Log(gameState.ToString());
+        
+
+        // Check if the game is over
+        if (gameState.IsGameOver())
+        {
+            Debug.Log("isGameOver == True");
+            GameOver();
+            return;
+        }
+
+        currentPlayer = nextPlayer;
+        if (currentPlayer != humanPlayer)   //if its the AI turn
+        {
+            StartCoroutine(AiThinking());
         }
     }
 
@@ -133,6 +159,8 @@ public class GameManager : MonoBehaviour
         }
 
         gameState.MakeMove(bestMove, currentPlayer);
+
+        
     }
 
     public void GameOver()
@@ -165,6 +193,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         AiTakeTurn();
         yield return null;
+        NextTurn();
         //aiThinkingUI.SetActive(false);
     }
 }

@@ -16,5 +16,8 @@ public class Evaluator
         return false;
     }
     
-    //public int 
+    public int EvaluateCol()
+    {
+        return 1;
+    }
 }
