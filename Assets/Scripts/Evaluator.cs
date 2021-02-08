@@ -6,154 +6,151 @@ public class Evaluator
 {
     public const int WIN_SCORE = 10000;
 
-    public bool Evaluate(GameState gameState, out int score)
-    {
-        score = 0;
+    //public bool Evaluate(GameState gameState, out int score)
+    //{
+    //    score = 0;
 
-        int[] scores = new int[2];
+    //    int[] scores = new int[2];
 
-        scores[0] += EvaluateEndGame(gameState);
-        scores[1] += EvaluateMobility(gameState);
+    //    scores[0] += EvaluateEndGame(gameState);
+    //    //scores[1] += EvaluateMobility(gameState);
 
-        for (int i = 0; i < scores.Length; i++)
-        {
-            if (Mathf.Abs(scores[i]) == WIN_SCORE)
-            {
-                score = scores[i];
-                return true;
-            }
-            score += scores[i];
-        }
+    //    for (int i = 0; i < scores.Length; i++)
+    //    {
+    //        if (Mathf.Abs(scores[i]) == WIN_SCORE)
+    //        {
+    //            score = scores[i];
+    //            return true;
+    //        }
+    //        score += scores[i];
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
 
-    int EvaluatePosition(GameState gameState)
-    {
-        float xScore = 0;
-        float oScore = 0;
-                
-        int xNumMoves = gameState.GetPossibleMoves('x').Count;
-        int oNumMoves = gameState.GetPossibleMoves('o').Count;
+    //public bool Evaluate(GameState gameState, out int score)
+    //{
+    //    score = 0;
+    //    float xScore = 0;
+    //    float oScore = 0;
 
-        char[,] board = gameState.Board;
+    //    int xNumMoves = gameState.GetPossibleMoves('x').Count;
+    //    int oNumMoves = gameState.GetPossibleMoves('o').Count;
+
+    //    char[,] board = gameState.Board;
 
 
-        // if any moves remain for either player, eval as normal
-        if (xNumMoves > 0 || oNumMoves > 0)
-        {
-            // check for posession of corners
-            if (board[0, 0] == 'x' || board[0, 0] == 'X')
-            {
-                xScore += 10;
-            }
-            else if (board[0, 0] == 'o' || board[0, 0] == 'O')
-            {
-                oScore += 10;
-            }
+    //    // if any moves remain for either player, eval as normal
+    //    if (xNumMoves > 0 || oNumMoves > 0)
+    //    {
+    //        // check for posession of corners
+    //        if (board[0, 0] == 'x' || board[0, 0] == 'X')
+    //        {
+    //            xScore += 10;
+    //        }
+    //        else if (board[0, 0] == 'o' || board[0, 0] == 'O')
+    //        {
+    //            oScore += 10;
+    //        }
 
-            if (board[0, board.GetLength(1)] == 'x' || board[0, board.GetLength(1)] == 'X')
-            {
-                xScore += 10;
-            }
-            else if (board[0, board.GetLength(1)] == 'o' || board[0, board.GetLength(1)] == 'O')
-            {
-                oScore += 10;
-            }
+    //        if (board[0, board.GetLength(1)-1] == 'x' || board[0, board.GetLength(1)-1] == 'X')
+    //        {
+    //            xScore += 10;
+    //        }
+    //        else if (board[0, board.GetLength(1)-1] == 'o' || board[0, board.GetLength(1)-1] == 'O')
+    //        {
+    //            oScore += 10;
+    //        }
 
-            if (board[board.GetLength(0), 0] == 'x' || board[board.GetLength(0), 0] == 'X')
-            {
-                xScore += 10;
-            }
-            else if (board[board.GetLength(0), 0] == 'o' || board[board.GetLength(0), 0] == 'O')
-            {
-                oScore += 10;
-            }
+    //        if (board[board.GetLength(0)-1, 0] == 'x' || board[board.GetLength(0)-1, 0] == 'X')
+    //        {
+    //            xScore += 10;
+    //        }
+    //        else if (board[board.GetLength(0)-1, 0] == 'o' || board[board.GetLength(0)-1, 0] == 'O')
+    //        {
+    //            oScore += 10;
+    //        }
 
-            if (board[board.GetLength(0), board.GetLength(1)] == 'x' || board[board.GetLength(0), board.GetLength(1)] == 'X')
-            {
-                xScore += 10;
-            }
-            else if (board[board.GetLength(0), board.GetLength(1)] == 'o' || board[board.GetLength(0), board.GetLength(1)] == 'O')
-            {
-                oScore += 10;
-            }
+    //        if (board[board.GetLength(0)-1, board.GetLength(1)-1] == 'x' || board[board.GetLength(0)-1, board.GetLength(1)-1] == 'X')
+    //        {
+    //            xScore += 10;
+    //        }
+    //        else if (board[board.GetLength(0)-1, board.GetLength(1)-1] == 'o' || board[board.GetLength(0)-1, board.GetLength(1)-1] == 'O')
+    //        {
+    //            oScore += 10;
+    //        }
 
-            // check number of available moves
-            xScore += xNumMoves;
-            oScore += oNumMoves;
+    //        // check number of available moves
+    //        xScore += xNumMoves;
+    //        oScore += oNumMoves;
 
-            // check for number of tiles possesed
-            for (int h = 0; h < board.GetLength(1); h++)
-            {
-                for (int w = 0; w < board.GetLength(0); w++)
-                {
-                    if (gameState.Board[w, h] == 'x')
-                    {
-                        xScore += 0.01f;
-                    }
+    //        // check for number of tiles possesed
+    //        for (int h = 0; h < board.GetLength(1); h++)
+    //        {
+    //            for (int w = 0; w < board.GetLength(0); w++)
+    //            {
+    //                if (gameState.Board[w, h] == 'x')
+    //                {
+    //                    xScore += 0.01f;
+    //                }
 
-                    if (gameState.Board[w, h] == 'X')
-                    {
-                        xScore += 0.02f;
-                    }
+    //                if (gameState.Board[w, h] == 'X')
+    //                {
+    //                    xScore += 0.02f;
+    //                }
 
-                    if (gameState.Board[w, h] == 'o')
-                    {
-                        oScore += 0.01f;
-                    }
+    //                if (gameState.Board[w, h] == 'o')
+    //                {
+    //                    oScore += 0.01f;
+    //                }
 
-                    if (gameState.Board[w, h] == 'O')
-                    {
-                        oScore += 0.02f;
-                    }
-                }
-            }
+    //                if (gameState.Board[w, h] == 'O')
+    //                {
+    //                    oScore += 0.02f;
+    //                }
+    //            }
+    //        }
 
-        }
-        else    // if no moves remain the game is over, and the evaluation should be how many pieces each player has
-        {
-            // check for number of tiles possesed
-            for (int h = 0; h < board.GetLength(1); h++)
-            {
-                for (int w = 0; w < board.GetLength(0); w++)
-                {
-                    if (gameState.Board[w, h] == 'x')
-                    {
-                        xScore += 1;
-                    }
+    //    }
+    //    else    // if no moves remain the game is over, and the evaluation should be how many pieces each player has
+    //    {
+    //        // check for number of tiles possesed
+    //        for (int h = 0; h < board.GetLength(1); h++)
+    //        {
+    //            for (int w = 0; w < board.GetLength(0); w++)
+    //            {
+    //                if (gameState.Board[w, h] == 'x')
+    //                {
+    //                    xScore += 1;
+    //                }
 
-                    if (gameState.Board[w, h] == 'X')
-                    {
-                        xScore += 2;
-                    }
+    //                if (gameState.Board[w, h] == 'X')
+    //                {
+    //                    xScore += 2;
+    //                }
 
-                    if (gameState.Board[w, h] == 'o')
-                    {
-                        oScore += 1;
-                    }
+    //                if (gameState.Board[w, h] == 'o')
+    //                {
+    //                    oScore += 1;
+    //                }
 
-                    if (gameState.Board[w, h] == 'O')
-                    {
-                        oScore += 2;
-                    }
-                }
-            }
-        }
+    //                if (gameState.Board[w, h] == 'O')
+    //                {
+    //                    oScore += 2;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    score = Mathf.RoundToInt(xScore - oScore);
+    //    // return difference in scores rounded to nearest int
+    //    return false;
+    //}
 
-        // return difference in scores rounded to nearest int
-        return Mathf.RoundToInt(xScore - oScore);
-    }
-
-    int EvaluateEndGame(GameState gameState)
+    public int Evaluate(GameState gameState)
     {
         int score = 0;
 
-        int p1Score = 0;
-        int p2Score = 0;
-
-        
-        Debug.Log("Score Start - P1 score: " + p1Score + " P2 score: " + p2Score);
+        Debug.Log("Score Start : " +score);
 
         for (int h = 0; h < gameState.Board.GetLength(1); h++)
         {
@@ -161,29 +158,44 @@ public class Evaluator
             {
                 if (gameState.Board[w, h] == 'x')
                 {
-                    p1Score++;
+                    score++;
                 }
 
                 if (gameState.Board[w, h] == 'X')
                 {
-                    p1Score += 2;
+                    score += 2;
                 }
 
                 if (gameState.Board[w, h] == 'o')
                 {
-                    p2Score++;
+                    score--;
                 }
 
                 if (gameState.Board[w, h] == 'O')
                 {
-                    p2Score += 2;
+                    score -= 2;
                 }
             }
         }
-        Debug.Log("Score end - P1 score: " + p1Score + " P2 score: " + p2Score);
+        Debug.Log("Score end: " + score);
 
-        
-        //if (p1Score > p2Score)  //check if X wins
+        // find who won, loss or drawed
+        char outcomeChar = gameState.GetGameOutcome();
+        if (outcomeChar == 'x')
+        {
+            score = WIN_SCORE;
+        }
+        else if (outcomeChar == 'o')
+        {
+            score = -WIN_SCORE;
+        }
+        else if (outcomeChar == 'd')
+        {
+            score = 0;
+        }
+        return score;
+
+        //if (score > 0)  //check if X wins
         //{
         //    score = WIN_SCORE;
         //}
@@ -195,14 +207,14 @@ public class Evaluator
         //{
         //    score +=;
         //}
-        return 1;
+        //return 1;
     }
 
 
-    int EvaluateMobility(GameState gameState)
-    {
-        return 1;
-    }
+    //int EvaluateMobility(GameState gameState)
+    //{
+    //    return 1;
+    //}
 
 
 
