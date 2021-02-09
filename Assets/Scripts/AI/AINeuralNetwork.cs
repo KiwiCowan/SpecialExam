@@ -33,7 +33,8 @@ public class AINeuralNetwork : AIPlayer
             }
         }
 
-        return
+        Vector2Int choosenMove = gameState.GetMoveFromIndex(move);
+        return choosenMove;
 
     }
 }

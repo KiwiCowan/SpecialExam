@@ -16,9 +16,12 @@ public class GameManager : MonoBehaviour
     Evaluator evaluator = new Evaluator();
     AIPlayer aiPlayer;
 
-    public char currentPlayer;
+    int currentPlayer;  // 0 = none, 1 = x = player1, 2 = o = player2
 
-    public char humanPlayer = 'o';
+    public int humanPlayerTurn;
+    public int  aiPlayerTurn;
+
+    private bool isHotseatGame = true;
     private bool isEndGame = false;
 
 
@@ -28,33 +31,51 @@ public class GameManager : MonoBehaviour
         gameBoard = GetComponent<GameBoard>();
         gameBoard.GenBoard(width, height);
 
-        //humanPlayer = Random.Range(0f, 1f) > 0.5f ? 'x' : 'o';  // Randomly assigns human player a turn
+       // humanPlayerTurn = Random.Range(0f, 1f) > 0.5f ? 1 : 2;  // Randomly assigns human player a turn
 
         // X always is player1
-        currentPlayer = 'x';
+        currentPlayer = 0;
 
-        Debug.Log(gameState.ToString());
+        //Debug.Log(gameState.ToString());
 
         if (opponentType != OpponentType.HUMAN)
         {
+            isHotseatGame = false;
             InitializeAIPlayer();
 
-            if (humanPlayer == 'o')     // checks if the AI is playing first
-            {
-                // StartCoroutine(AiThinking());
-                AiTakeTurn();
+            //if (humanPlayerTurn == 2)     // checks if the AI is playing first
+            //{
+            //    // StartCoroutine(AiThinking());
+            //    AiTakeTurn();
 
-            }
+            //}
         }
+        
     }
+
+
 
     void Start()
     {
-        gameUI.UpdateUI(gameState, currentPlayer);
-        gameBoard.UpdateBoard(gameState, currentPlayer);
+        SetUp();
+
+        //gameUI.UpdateUI(gameState, currentPlayer);
+        //gameBoard.UpdateBoard(gameState, currentPlayer);
         //HumanTurn();
     }
 
+    void SetUp()    // assign each player a turn 
+    {
+        if(!isHotseatGame)  // if playing against AI
+        {
+            // humanPlayerTurn = Random.Range(0f, 1f) > 0.5f ? 1 : 2;  // Randomly assigns human player a turn
+            // for now  humanPLayer will start
+            humanPlayerTurn = 1;
+            aiPlayerTurn = 2;
+        }
+        gameBoard.UpdateBoard(gameState);
+
+    }
     void InitializeAIPlayer()
     {
         switch (opponentType)

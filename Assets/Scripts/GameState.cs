@@ -7,7 +7,7 @@ public class GameState
     public int height;
     public int width;
 
-    char currentPlayer;
+    int currentPlayer;
     char[,] board;
 
     Vector2Int p1Pos;   // x
@@ -18,21 +18,25 @@ public class GameState
 
     readonly Vector2Int[] Moves = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
 
-    char lastPlayerToMove;
+    int lastPlayerToMove;
     Vector2Int lastMove;
+    int lastMoveIndex;
+
 
     public char[,] Board { get => board; }
     public Vector2Int P1Pos { get => p1Pos; }
     public Vector2Int P2Pos { get => p2Pos; }
     public Vector2Int LastMove { get => lastMove; }
-    public char LastPlayerToMove { get => lastPlayerToMove;}
+    public int LastPlayerToMove { get => lastPlayerToMove; }
+    public int LastMoveIndex { get => lastMoveIndex; }
+    public int CurrentPlayer { get => currentPlayer; set => currentPlayer = value; }
 
     public GameState(int _width, int _height)
     {
         this.height = _height;
         this.width = _width;
         this.board = new char[width, height];
-        
+
         Reset();
 
     }
@@ -75,7 +79,7 @@ public class GameState
         return new GameState(board.Clone() as char[,], p1Pos, p2Pos);
     }
 
-    public List<GameState> GetNextPossibleState(char curPlayer)
+    public List<GameState> GetNextPossibleState(int curPlayer)
     {
         List<Vector2Int> possibleMoves = GetPossibleMoves(curPlayer);
         List<GameState> possibleStates = new List<GameState>();
@@ -84,66 +88,69 @@ public class GameState
         foreach (Vector2Int move in possibleMoves)
         {
             Debug.Log("Possible move: " + move + "(" + curPlayer + ")");
-            GameState duplicatedState = this.Dupilcate();
+            GameState duplicatedState = Dupilcate();
             duplicatedState.MakeMove(move, curPlayer);
+            //duplicatedState.lastMove = move;
+
             possibleStates.Add(duplicatedState);
-            Debug.Log("State " + duplicatedState);         
+            Debug.Log("State " + duplicatedState);
         }
         return possibleStates;
     }
 
-    public List<Vector2Int> GetPossibleMoves(char curPlayer)
+    public List<Vector2Int> GetPossibleMoves(int curPlayer) // returns the vector2Ints of Move[]
     {
         List<Vector2Int> possibleMoves = new List<Vector2Int>();
 
-        Vector2Int curPlayerPos = curPlayer == 'x' ? p1Pos : p2Pos;
+        Vector2Int curPlayerPos = curPlayer == 1 ? p1Pos : p2Pos;
 
         for (int i = 0; i < Moves.Length; i++)
         {
             Vector2Int newmove = curPlayerPos + Moves[i];
             if (IsValidMove(newmove, curPlayer) /*&& board[x, y] == enemyTile*/)    //Right
             {
-                possibleMoves.Add(newmove);
+                possibleMoves.Add(Moves[i]);
             }
         }
-        int x = curPlayerPos.x;
-        int y = curPlayerPos.y;
+
+        //int x = curPlayerPos.x;
+        //int y = curPlayerPos.y;
         //Debug.Log("currPlayerPos: " + curPlayer + " (" + x + "," + y + ")");
 
         //char enemyTile = curPlayer == 'x' ? 'o' : 'x';
 
-        if (IsValidMove(x + 1, y, curPlayer) /*&& board[x, y] == enemyTile*/)    //Right
-        {
-            possibleMoves.Add(new Vector2Int(x + 1, y));
-        }
+        //if (IsValidMove(x + 1, y, curPlayer) /*&& board[x, y] == enemyTile*/)    //Right
+        //{
+        //    possibleMoves.Add(new Vector2Int(x + 1, y));
+        //}
 
-        if (IsValidMove(x, y + 1, curPlayer))   //Up
-        {
-            possibleMoves.Add(new Vector2Int(x, y + 1));
-        }
+        //if (IsValidMove(x, y + 1, curPlayer))   //Up
+        //{
+        //    possibleMoves.Add(new Vector2Int(x, y + 1));
+        //}
 
-        if (IsValidMove(x - 1, y, curPlayer))    //Left
-        {
-            possibleMoves.Add(new Vector2Int(x - 1, y));
-        }
+        //if (IsValidMove(x - 1, y, curPlayer))    //Left
+        //{
+        //    possibleMoves.Add(new Vector2Int(x - 1, y));
+        //}
 
-        if (IsValidMove(x, y - 1, curPlayer))    //Down
-        {
-            possibleMoves.Add(new Vector2Int(x, y - 1));
-        }
+        //if (IsValidMove(x, y - 1, curPlayer))    //Down
+        //{
+        //    possibleMoves.Add(new Vector2Int(x, y - 1));
+        //}
 
         return possibleMoves;
 
     }
 
-    public bool IsValidMove(Vector2Int move, char player)
+    public bool IsValidMove(Vector2Int move, int player)
     {
         return IsValidMove(move.x, move.y, player);
     }
 
-    public bool IsValidMove(int x, int y, char currPlayer)
+    public bool IsValidMove(int x, int y, int currPlayer)
     {
-        Vector2Int playerPos = currPlayer == 'x' ? p1Pos : p2Pos;
+        Vector2Int playerPos = currPlayer == 1 ? p1Pos : p2Pos;
 
         //bool isValid = false;
         if (x < 0 || x >= width || y < 0 || y >= height /*|| board[playerPos.x, playerPos.y] == */)
@@ -152,8 +159,9 @@ public class GameState
             return false;
         }
 
-        char enemyTile = currPlayer == 'x' ? 'o' : 'x';
-        Vector2Int enemyPos = (enemyTile == 'x' ? p1Pos : p2Pos);
+        char playerTile = currPlayer == 1 ? 'x' : 'o';
+        char enemyTile = currPlayer == 1 ? 'o' : 'x';
+        Vector2Int enemyPos = (currentPlayer == 1 ? p2Pos : p1Pos);
 
         if (enemyPos.x == x && enemyPos.y == y) // check if the move is on the same tile as the enemy
         {
@@ -176,9 +184,9 @@ public class GameState
         //    return false;
         //}
 
-        if (board[x, y] == '.' || board[x, y] == currPlayer || board[x, y] == enemyTile)
+        if (board[x, y] == '.' || board[x, y] == playerTile || board[x, y] == enemyTile)
         {
-            if (board[playerPos.x, playerPos.y] == (currPlayer == 'x' ? 'X' : 'O'))     //if the current player is on a soild then they cant capture a enemy tile
+            if (board[playerPos.x, playerPos.y] == (playerTile == 'x' ? 'X' : 'O'))     //if the current player is on a soild then they cant capture a enemy tile
             {
                 if (board[x, y] == enemyTile)
                 {
@@ -193,77 +201,91 @@ public class GameState
         //    return false;
         //}
 
-        return true;
+        return false;
     }
 
-    public bool MakeMove(Vector2Int playerPos, char curPlayer)
+    public bool MakeMove(int moveIndex, int curPlayer)
     {
-        //List<Vector2Int> legalMoves = GetPossibleMoves(curPlayer);
+        return MakeMove(Moves[moveIndex], curPlayer);
+    }
 
-       // if (legalMoves.Contains(playerPos))
-        //{
+    public bool MakeMove(Vector2Int movePos, int curPlayer) //Takes the move Vector2Int eg: (0,1) = down
+    {
+        Vector2Int playerPos = curPlayer == 1 ? p1Pos : p2Pos;
+
+        List<Vector2Int> legalMoves = GetPossibleMoves(curPlayer);
+
+        if (legalMoves.Contains(movePos))
+        {
+            int x = playerPos.x + movePos.x;
+            int y = playerPos.y + movePos.y;
             //if (IsValidMove(playerPos.x, playerPos.y, curPlayer))
             //{
-            if (board[playerPos.x, playerPos.y] == GetNextPlayerChar(curPlayer))    //set the tile to solid if already captured
+            if (board[x, y] == GetNextPlayerChar(curPlayer))    //set the tile to solid if already captured
             {
-                board[playerPos.x, playerPos.y] = curPlayer == 'x' ? 'X' : 'O';
+                board[x, y] = curPlayer == 1 ? 'X' : 'O';
             }
             else
             {
-                board[playerPos.x, playerPos.y] = curPlayer;    //sets char
+                board[x, y] = curPlayer == 1 ? 'x' : 'o';    //sets char
             }
-                
-            
 
-            if (curPlayer == 'x')
+
+
+            if (curPlayer == 1)
             {
-                p1Pos = playerPos;
+                p1Pos = playerPos + movePos;
             }
             else
             {
-                p2Pos = playerPos;
+                p2Pos = playerPos + movePos;
             }
 
             lastPlayerToMove = curPlayer;
-            lastMove = playerPos;
+            lastMove = movePos;
+            lastMoveIndex = GetMoveIndex(movePos);
+
+
             return true;
-        //}
-        //return false;
+        }
+        return false;
     }
 
-    public char GetNextPlayerChar(char currPlayer)
+    public char GetNextPlayerChar(int currPlayer)
     {
-        char enemyTile = currPlayer == 'x' ? 'o' : 'x';
+        char enemyTile = currPlayer == 1 ? 'o' : 'x';
         return enemyTile;
     }
 
     public bool IsGameOver()
     {
-        List<Vector2Int> xLegalMoves = GetPossibleMoves('x');
-        if (xLegalMoves.Count == 0)  // Check if playerX has no moves left (if they aren't traped by soild tiles)
+        List<Vector2Int> xLegalMoves = GetPossibleMoves(1);
+        if (xLegalMoves.Count > 0)  // Check if playerX has any moves left (if they aren't traped by soild tiles)
         {
-            return true;
+            return false;
         }
 
-        List<Vector2Int> oLegalMoves = GetPossibleMoves('o');
-        if (oLegalMoves.Count == 0)  // Check if playerO has no moves left (if they aren't traped by soild tiles)
+        List<Vector2Int> oLegalMoves = GetPossibleMoves(2);
+        if (oLegalMoves.Count > 0)  // Check if playerO has any moves left (if they aren't traped by soild tiles)
         {
-            return true;
+            return false;
         }
-                
-        for (int h = 0; h < board.GetLength(1); h++)    
+
+        for (int h = 0; h < board.GetLength(1); h++)
         {
             for (int w = 0; w < board.GetLength(0); w++)
             {
-                if(board[w, h] == '.')  // check if there are any empty tiles left 
+                if (board[w, h] == '.')  // check if there are any empty tiles left 
                 {
                     return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
+
+
 
     public char GetGameOutcome()
     {
@@ -277,14 +299,14 @@ public class GameState
         {
             for (int w = 0; w < board.GetLength(0); w++)
             {
-                if (board[w, h] == 'x')   
+                if (board[w, h] == 'x')
                 {
                     p1Score++;
                 }
 
-                if (board[w, h] == 'X')  
+                if (board[w, h] == 'X')
                 {
-                    p1Score += 2; 
+                    p1Score += 2;
                 }
 
                 if (board[w, h] == 'o')
@@ -300,11 +322,11 @@ public class GameState
         }
         Debug.Log("Score end - P1 score: " + p1Score + " P2 score: " + p2Score);
 
-        if(p1Score == p2Score)  //check if its a draw
+        if (p1Score == p2Score)  //check if its a draw
         {
             outcome = 'd';
         }
-        else if(p1Score > p2Score)  //check if X wins
+        else if (p1Score > p2Score)  //check if X wins
         {
             outcome = 'x';
         }
@@ -315,8 +337,36 @@ public class GameState
         return outcome;
     }
 
-    public
+    public Vector2Int GetMoveFromIndex(int index)
+    {
+        Vector2Int curPlayerPos = currentPlayer == 1 ? p1Pos : p2Pos;
 
+        Vector2Int newmove = Moves[index];
+        return newmove;
+    }
+    public Vector2Int GetTileFromIndex(int index)
+    {
+        Vector2Int curPlayerPos = currentPlayer == 'x' ? p1Pos : p2Pos;
+
+        Vector2Int newmove = curPlayerPos + Moves[index];
+        return newmove;
+    }
+
+    public int GetMoveIndex(Vector2Int move)
+    {
+        //Vector2Int curPlayerPos = currentPlayer == 1 ? p1Pos : p2Pos;
+        int moveIndex = -1;
+        for (int i = 0; i < Moves.Length; i++)
+        {
+            if (Moves[i] == move)
+            {
+                moveIndex = i;
+            }
+
+        }
+
+        return moveIndex;
+    }
     public DataSet PrepareDataSet(int inputLayerSize, int outputLayerSize, int correctMove = -1)
     {
         double[] values = new double[inputLayerSize];
@@ -325,7 +375,7 @@ public class GameState
         int width = board.GetLength(0);
         int height = board.GetLength(1);
 
-        for(int y = 0; y<height; y++)
+        for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
@@ -335,7 +385,7 @@ public class GameState
 
         values[values.Length - 1] = lastPlayerToMove;
 
-        if (correctMove >=0)
+        if (correctMove >= 0)
         {
             targets[correctMove] = 1;
         }
@@ -349,7 +399,7 @@ public class GameState
         string playersPos = ("P1pos: " + p1Pos + "\n" + "P2pos: " + p2Pos);
         string boardInfo = ("Board: (" + width + "," + height + ")" + "\n");
 
-        
+
 
         for (int h = 0; h < board.GetLength(1); h++)    //Updates board by setting types
         {

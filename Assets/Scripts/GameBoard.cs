@@ -45,10 +45,10 @@ public class GameBoard : MonoBehaviour
         }
     }
 
-    public void UpdateBoard(GameState _gameState, char currentPlayer)
+    public void UpdateBoard(GameState _gameState)
     {
         GameState gameState = _gameState;        
-        List<Vector2Int> possibleMoves = gameState.GetPossibleMoves(currentPlayer);
+        List<Vector2Int> possibleMoves = gameState.GetPossibleMoves(gameState.CurrentPlayer);
 
        
         
@@ -72,15 +72,23 @@ public class GameBoard : MonoBehaviour
             tile.DrawTile();
         }
 
-        string pMovesString = "Player " + currentPlayer + ": can move to ";
-        foreach (Vector2Int move in possibleMoves)
+        string pMovesString = "Player " + gameState.CurrentPlayer + ": can move to ";
+        for (int i = 0; i < possibleMoves.Count; i++)
         {
-            tiles[move.x, move.y].HighlightTile();
-            pMovesString += "(" + move.x + "," + move.y + ")" + "\n";
+            Vector2Int newPossibleTile = gameState.GetMoveFromIndex(i);
+
+            tiles[newPossibleTile.x, newPossibleTile.y].HighlightTile();
+            pMovesString += "(" + newPossibleTile.x + "," + newPossibleTile.y + ")" + "\n";
         }
+
+        //foreach (Vector2Int move in possibleMoves)
+        //{
+        //    tiles[move.x, move.y].HighlightTile();
+        //    pMovesString += "(" + move.x + "," + move.y + ")" + "\n";
+        //}
         Debug.Log(pMovesString);
         
-        Vector2Int curPlayerPos = currentPlayer == 'x' ? gameState.P1Pos : gameState.P2Pos;
+        Vector2Int curPlayerPos = gameState.CurrentPlayer == 'x' ? gameState.P1Pos : gameState.P2Pos;
 
         int x = curPlayerPos.x;
         int y = curPlayerPos.y;

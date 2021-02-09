@@ -34,8 +34,8 @@ public class Evaluator
         float xScore = 0;
         float oScore = 0;
 
-        int xNumMoves = gameState.GetPossibleMoves('x').Count;
-        int oNumMoves = gameState.GetPossibleMoves('o').Count;
+        int xNumMoves = gameState.GetPossibleMoves(1).Count;
+        int oNumMoves = gameState.GetPossibleMoves(0).Count;
 
         char[,] board = gameState.Board;
 
