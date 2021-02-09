@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public OpponentType opponentType;
 
     [SerializeField]
-    int minimaxDepth = 0;
+    int minimaxDepth = 5;
 
     GameState gameState;
     GameBoard gameBoard;
@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     public char currentPlayer;
 
-    private char humanPlayer = 'x';
+    public char humanPlayer = 'o';
     private bool isEndGame = false;
 
 
@@ -41,7 +41,8 @@ public class GameManager : MonoBehaviour
 
             if (humanPlayer == 'o')     // checks if the AI is playing first
             {
-                StartCoroutine(AiThinking());
+                // StartCoroutine(AiThinking());
+                AiTakeTurn();
 
             }
         }
@@ -109,49 +110,52 @@ public class GameManager : MonoBehaviour
         if (gameState.MakeMove(newPlayerPos, currentPlayer)) //Returns true if legal an places move on board
         {
             Debug.Log("Tile clicked at: " + newPlayerPos.x + "," + newPlayerPos.y + " -> " + currentPlayer);
-            NextTurn();
-                
-            ////update the GameBoard
-                
-            //char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
-            //gameBoard.UpdateBoard(gameState, nextPlayer);
-            //gameUI.UpdateUI(gameState, nextPlayer);
-            //Debug.Log(gameState.ToString());
-            //currentPlayer = nextPlayer;
+            //NextTurn();
 
-            //// Check if the game is over
-            //if (gameState.IsGameOver())
-            //{
-            //    Debug.Log("isGameOver == True");
-            //    GameOver();
-            //    return;
-            //}
+            //update the GameBoard
+
+            char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
+            gameBoard.UpdateBoard(gameState, nextPlayer);
+            gameUI.UpdateUI(gameState, nextPlayer);
+            Debug.Log(gameState.ToString());
+            currentPlayer = nextPlayer;
+
+            // Check if the game is over
+            if (gameState.IsGameOver())
+            {
+                Debug.Log("isGameOver == True");
+                GameOver();
+                return;
+            }
         }
         
     }
 
     void NextTurn()
     {
-        //update the GameBoard
+
+        //// Check if the game is over
+        //if (gameState.IsGameOver())
+        //{
+        //    Debug.Log("isGameOver == True");
+        //    GameOver();
+        //    return;
+        //}
+
+        ////update the GameBoard
         char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
-        gameBoard.UpdateBoard(gameState, currentPlayer);
-        gameUI.UpdateUI(gameState, currentPlayer);
-        Debug.Log(gameState.ToString());
+        //gameBoard.UpdateBoard(gameState, nextPlayer);
+        //gameUI.UpdateUI(gameState, nextPlayer);
+        //Debug.Log(gameState.ToString());
         
 
-        // Check if the game is over
-        if (gameState.IsGameOver())
-        {
-            Debug.Log("isGameOver == True");
-            GameOver();
-            return;
-        }
 
         currentPlayer = nextPlayer;
         Debug.Log("next player: " + nextPlayer);
         if (currentPlayer != humanPlayer && opponentType != OpponentType.HUMAN)   //if its the AI turn
         {
-            StartCoroutine(AiThinking());
+            AiTakeTurn();
+            //StartCoroutine(AiThinking());
         }
     }
 
@@ -160,7 +164,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log("AI Player: " + currentPlayer);
         Vector2Int bestMove = aiPlayer.GetMove(gameState, currentPlayer);
         //Debug.Log("AI choose -> " + bestMove.x + " " + bestMove.y);
-        List<GameState> possibleStates = gameState.GetNextPossibleState(currentPlayer);
+        //List<GameState> possibleStates = gameState.GetNextPossibleState(currentPlayer);
         //Debug.Log(possibleStates.Count);
 
         //if minimax doesn't work yet, we will place the symbol in next available spot.
@@ -172,7 +176,23 @@ public class GameManager : MonoBehaviour
         if(gameState.MakeMove(bestMove, currentPlayer))
         {
             Debug.Log("AI moved -> " + bestMove.x + " " + bestMove.y);
-            NextTurn();
+
+            //update the GameBoard
+
+            char nextPlayer = gameState.GetNextPlayerChar(currentPlayer);
+            gameBoard.UpdateBoard(gameState, nextPlayer);
+            gameUI.UpdateUI(gameState, nextPlayer);
+            Debug.Log(gameState.ToString());
+            currentPlayer = nextPlayer;
+
+            // Check if the game is over
+            if (gameState.IsGameOver())
+            {
+                Debug.Log("isGameOver == True");
+                GameOver();
+                return;
+            }
+           //NextTurn();
         }
     }
 
@@ -200,15 +220,15 @@ public class GameManager : MonoBehaviour
         gameUI.GameOverUI(outcomeString);
     }
 
-    IEnumerator AiThinking()
-    {
-        //aiThinkingUI.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
-        AiTakeTurn();
-        //yield return null;
+    //IEnumerator AiThinking()
+    //{
+    //    //aiThinkingUI.SetActive(true);
+    //    yield return new WaitForSeconds(0.5f);
+    //    AiTakeTurn();
+    //    //yield return null;
         
-        //aiThinkingUI.SetActive(false);
-    }
+    //    //aiThinkingUI.SetActive(false);
+    //}
 }
 
 public enum OpponentType

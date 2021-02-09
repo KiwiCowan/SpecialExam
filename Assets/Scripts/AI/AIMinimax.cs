@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class AIMinimax : AIPlayer
 {
-    public int MaxDepth { get; set; } = 5;
+    public int MaxDepth { get; set; }
 
     Evaluator evaluator = new Evaluator();
     public override Vector2Int GetMove(GameState gameState, char player)
-    {       
+    {
         return Minimax(gameState, MaxDepth, player, int.MinValue, int.MaxValue);
     }
 
@@ -21,52 +21,57 @@ public class AIMinimax : AIPlayer
             //return player == 'x' ? gameState.P1Pos : gameState.P2Pos;
             return gameState.LastMove;
         }
-
-        int bestEval = player == 'x' ? int.MinValue : int.MaxValue;
-        Vector2Int bestMove = new Vector2Int(1, 1);
-
-        Debug.Log("Minimax - depth: " + depth + ", possible states: " + nextGameStates.Count);
-
-        foreach(GameState state in nextGameStates)
+        else
         {
-            Vector2Int newMove = Minimax(state, depth - 1, player == 'x' ? 'o' : 'x', alpha, beta);
 
-            GameState newGameState = gameState.Dupilcate();
-            newGameState.MakeMove(newMove, player);
 
-            int newEval = evaluator.Evaluate(newGameState);
+            int bestEval = player == 'x' ? int.MinValue : int.MaxValue;
+            Vector2Int bestMove = new Vector2Int(-1, -1);
 
-            if (player == 'x')
+            Debug.Log("Minimax - depth: " + depth + ", possible states: " + nextGameStates.Count);
+
+            foreach (GameState state in nextGameStates)
             {
-                if(newEval > bestEval)
-                {
-                    bestEval = newEval;
-                    bestMove = newMove;
-                }
+                Vector2Int newMove = Minimax(state, depth - 1, player == 'x' ? 'o' : 'x', alpha, beta);
 
-                // Alpha beta pruning for maximizing player
-                alpha = Mathf.Max(alpha, bestEval);
-                if (alpha >= beta)
+                //GameState newGameState = gameState.Dupilcate();
+                state.MakeMove(newMove, player);
+
+                int newEval = evaluator.Evaluate(state);
+
+                if (player == 'x')
                 {
-                    break;
+                    if (newEval > bestEval)
+                    {
+                        bestEval = newEval;
+                        bestMove = newMove;
+                    }
+
+                    // Alpha beta pruning for maximizing player
+                    alpha = Mathf.Max(alpha, bestEval);
+                    if (alpha >= beta)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    if (newEval < bestEval)
+                    {
+                        bestEval = newEval;
+                        bestMove = newMove;
+                    }
+
+                    // Alpha beta pruning for maximizing player
+                    alpha = Mathf.Min(beta, bestEval);
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
                 }
             }
-            else
-            {
-                if (newEval < bestEval)
-                {
-                    bestEval = newEval;
-                    bestMove = newMove;
-                }
-
-                // Alpha beta pruning for maximizing player
-                alpha = Mathf.Min(beta, bestEval);
-                if (beta <= alpha)
-                {
-                    break;
-                }
-            }
+            Debug.Log(bestMove);
+            return bestMove;
         }
-        return bestMove;
     }
 }

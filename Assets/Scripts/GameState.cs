@@ -7,6 +7,7 @@ public class GameState
     public int height;
     public int width;
 
+    char currentPlayer;
     char[,] board;
 
     Vector2Int p1Pos;   // x
@@ -14,6 +15,8 @@ public class GameState
 
     int p1Score;    // x
     int p2Score;    // o
+
+    readonly Vector2Int[] Moves = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
 
     char lastPlayerToMove;
     Vector2Int lastMove;
@@ -95,6 +98,14 @@ public class GameState
 
         Vector2Int curPlayerPos = curPlayer == 'x' ? p1Pos : p2Pos;
 
+        for (int i = 0; i < Moves.Length; i++)
+        {
+            Vector2Int newmove = curPlayerPos + Moves[i];
+            if (IsValidMove(newmove, curPlayer) /*&& board[x, y] == enemyTile*/)    //Right
+            {
+                possibleMoves.Add(newmove);
+            }
+        }
         int x = curPlayerPos.x;
         int y = curPlayerPos.y;
         //Debug.Log("currPlayerPos: " + curPlayer + " (" + x + "," + y + ")");
@@ -150,37 +161,37 @@ public class GameState
             //(currPlayer == 'x' ? p1Pos : p2Pos) == new Vector2Int(x, y) ||
         }
 
-        bool xMove = x != playerPos.x;
-        bool yMove = y != playerPos.y;
+        //bool xMove = x != playerPos.x;
+        //bool yMove = y != playerPos.y;
 
-        //check to see if we moved diagonally - illegal
-        if(xMove && yMove)
-        {
-            return false;
-        }
-
-        //check if we moved more that one space - illegal.
-        if(Mathf.Abs(x - playerPos.x) > 1 || Mathf.Abs(y - playerPos.y) > 1)
-        {
-            return false;
-        }
-
-        //if (board[x, y] == '.' || board[x, y] == currPlayer || board[x, y] == enemyTile)
+        ////check to see if we moved diagonally - illegal
+        //if(xMove && yMove)
         //{
-        //    if (board[playerPos.x, playerPos.y] == (currPlayer == 'x' ? 'X' : 'O'))     //if the current player is on a soild then they cant capture a enemy tile
-        //    {
-        //        if (board[x, y] == enemyTile)
-        //        {
-        //            return false;
-        //        }
-        //    }
-        //    return true;
+        //    return false;
         //}
-        char playerSolid = currPlayer == 'x' ? 'X' : 'O';
-        if (board[playerPos.x, playerPos.y] == playerSolid && board[x, y] == enemyTile)
+
+        ////check if we moved more that one space - illegal.
+        //if(Mathf.Abs(x - playerPos.x) > 1 || Mathf.Abs(y - playerPos.y) > 1)
+        //{
+        //    return false;
+        //}
+
+        if (board[x, y] == '.' || board[x, y] == currPlayer || board[x, y] == enemyTile)
         {
-            return false;
+            if (board[playerPos.x, playerPos.y] == (currPlayer == 'x' ? 'X' : 'O'))     //if the current player is on a soild then they cant capture a enemy tile
+            {
+                if (board[x, y] == enemyTile)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
+        //char playerSolid = currPlayer == 'x' ? 'X' : 'O';
+        //if (board[playerPos.x, playerPos.y] == playerSolid && board[x, y] == enemyTile)
+        //{
+        //    return false;
+        //}
 
         return true;
     }
@@ -229,15 +240,15 @@ public class GameState
     public bool IsGameOver()
     {
         List<Vector2Int> xLegalMoves = GetPossibleMoves('x');
-        if (xLegalMoves.Count > 0)  // Check if playerX has no moves left (if they aren't traped by soild tiles)
+        if (xLegalMoves.Count == 0)  // Check if playerX has no moves left (if they aren't traped by soild tiles)
         {
-            return false;
+            return true;
         }
 
         List<Vector2Int> oLegalMoves = GetPossibleMoves('o');
-        if (oLegalMoves.Count > 0)  // Check if playerO has no moves left (if they aren't traped by soild tiles)
+        if (oLegalMoves.Count == 0)  // Check if playerO has no moves left (if they aren't traped by soild tiles)
         {
-            return false;
+            return true;
         }
                 
         for (int h = 0; h < board.GetLength(1); h++)    
@@ -250,7 +261,8 @@ public class GameState
                 }
             }
         }
-        return true;
+
+        return false;
     }
 
     public char GetGameOutcome()
@@ -301,6 +313,34 @@ public class GameState
             outcome = 'o';
         }
         return outcome;
+    }
+
+    public
+
+    public DataSet PrepareDataSet(int inputLayerSize, int outputLayerSize, int correctMove = -1)
+    {
+        double[] values = new double[inputLayerSize];
+        double[] targets = new double[outputLayerSize];
+
+        int width = board.GetLength(0);
+        int height = board.GetLength(1);
+
+        for(int y = 0; y<height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                values[y * width + x] = board[x, y];
+            }
+        }
+
+        values[values.Length - 1] = lastPlayerToMove;
+
+        if (correctMove >=0)
+        {
+            targets[correctMove] = 1;
+        }
+
+        return new DataSet(values, targets);
     }
 
     public override string ToString()
