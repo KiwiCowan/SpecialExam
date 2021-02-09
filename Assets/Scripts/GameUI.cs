@@ -24,9 +24,9 @@ public class GameUI : MonoBehaviour
         gameOverPanel.SetActive(false);
     }
 
-    public void UpdateUI(GameState gameState, char curPlayerChar)
+    public void UpdateUI(GameState gameState)
     {
-        curPlayerText.text = curPlayerChar.ToString();
+        curPlayerText.text = gameState.CurrentPlayer == 1 ? "x" : "o";
     }
 
     public void GameOverUI(string outcome)

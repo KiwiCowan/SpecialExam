@@ -776,9 +776,10 @@ MonoBehaviour:
   height: 5
   gameUI: {fileID: 669345360}
   opponentType: 2
+  gameSystem: 0
   minimaxDepth: 5
-  currentPlayer: 0
-  humanPlayer: 111
+  humanPlayerTurn: 0
+  aiPlayerTurn: 0
 --- !u!4 &1013179871
 Transform:
   m_ObjectHideFlags: 0

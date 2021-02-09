@@ -97,7 +97,7 @@ public class Tile : MonoBehaviour
         //Debug.Log("hightlight tile " + pos.x + "," + pos.y);
         // isHighlighed = true;        
         //sRenderer.color = Color.clear;
-        DrawTile();
+        //DrawTile();
         switch (tileType)
         {
             case TileType.EMPTY:

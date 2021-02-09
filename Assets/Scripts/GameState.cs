@@ -15,12 +15,12 @@ public class GameState
 
     int p1Score;    // x
     int p2Score;    // o
-
+    int lastMoveIndex;
     readonly Vector2Int[] Moves = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
 
     int lastPlayerToMove;
     Vector2Int lastMove;
-    int lastMoveIndex;
+    
 
 
     public char[,] Board { get => board; }
@@ -28,8 +28,9 @@ public class GameState
     public Vector2Int P2Pos { get => p2Pos; }
     public Vector2Int LastMove { get => lastMove; }
     public int LastPlayerToMove { get => lastPlayerToMove; }
-    public int LastMoveIndex { get => lastMoveIndex; }
+    
     public int CurrentPlayer { get => currentPlayer; set => currentPlayer = value; }
+    public int LastMoveIndex { get => lastMoveIndex; set => lastMoveIndex = value; }
 
     public GameState(int _width, int _height)
     {
@@ -206,6 +207,7 @@ public class GameState
 
     public bool MakeMove(int moveIndex, int curPlayer)
     {
+        lastMoveIndex = moveIndex;
         return MakeMove(Moves[moveIndex], curPlayer);
     }
 
@@ -229,16 +231,16 @@ public class GameState
             {
                 board[x, y] = curPlayer == 1 ? 'x' : 'o';    //sets char
             }
-
+            Debug.Log("move to -> " + x + "," + y);
 
 
             if (curPlayer == 1)
             {
-                p1Pos = playerPos + movePos;
+                p1Pos = new Vector2Int(x,y);
             }
             else
             {
-                p2Pos = playerPos + movePos;
+                p2Pos = new Vector2Int(x, y);
             }
 
             lastPlayerToMove = curPlayer;
@@ -260,16 +262,17 @@ public class GameState
     public bool IsGameOver()
     {
         List<Vector2Int> xLegalMoves = GetPossibleMoves(1);
-        if (xLegalMoves.Count > 0)  // Check if playerX has any moves left (if they aren't traped by soild tiles)
+        List<Vector2Int> oLegalMoves = GetPossibleMoves(2);
+        if (xLegalMoves.Count > 0 && oLegalMoves.Count > 0)  // Check if playerX has any moves left (if they aren't traped by soild tiles)
         {
             return false;
         }
 
-        List<Vector2Int> oLegalMoves = GetPossibleMoves(2);
-        if (oLegalMoves.Count > 0)  // Check if playerO has any moves left (if they aren't traped by soild tiles)
-        {
-            return false;
-        }
+        
+        //if (oLegalMoves.Count > 0)  // Check if playerO has any moves left (if they aren't traped by soild tiles)
+        //{
+        //    return false;
+        //}
 
         for (int h = 0; h < board.GetLength(1); h++)
         {
@@ -346,7 +349,7 @@ public class GameState
     }
     public Vector2Int GetTileFromIndex(int index)
     {
-        Vector2Int curPlayerPos = currentPlayer == 'x' ? p1Pos : p2Pos;
+        Vector2Int curPlayerPos = currentPlayer == 1 ? p1Pos : p2Pos;
 
         Vector2Int newmove = curPlayerPos + Moves[index];
         return newmove;
