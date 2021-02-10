@@ -12,7 +12,7 @@ public class AINeuralNetwork : AIPlayer
     {
         this.neuralNetwork = _neuralNetwork;
     }
-    public override Vector2Int GetMove(GameState gameState, char player)
+    public override int GetMove(GameState gameState, char player)
     {
         DataSet dataSet = gameState.PrepareDataSet(
             neuralNetwork.inputLayer.Count,
@@ -33,8 +33,8 @@ public class AINeuralNetwork : AIPlayer
             }
         }
 
-        Vector2Int choosenMove = gameState.GetMoveFromIndex(move);
-        return choosenMove;
+        //Vector2Int choosenMove = gameState.GetMoveFromIndex(move);
+        return move;
 
     }
 }

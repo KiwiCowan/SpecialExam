@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class AIDumb : AIPlayer
 {
-    public override Vector2Int GetMove(GameState gameState, char player)
+    public override int GetMove(GameState gameState, char player)
     {
-        List<Vector2Int> legalMoves = gameState.GetPossibleMoves(player);
+        int playerInt = player == 'x' ? 1 : 2;
+        List<int> legalMoves = gameState.GetPossibleMovesIndexs(playerInt);
         int randIndex = Random.Range(0, legalMoves.Count);
         return legalMoves[randIndex];
     }

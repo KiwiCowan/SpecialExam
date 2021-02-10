@@ -118,6 +118,8 @@ public class GameManager : MonoBehaviour
                 }
             case OpponentType.NEURAL_NETWORK_AI:
                 {
+                    NeuralNetwork nn = new NeuralNetwork(25, new int[] { 128, 512 }, 5, 0.008, 0.005); ;
+                    aiPlayer = new AINeuralNetwork(nn);
                     break;
                 }
         }
@@ -152,7 +154,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        StartCoroutine(MakeMoveOnState(newTilePos- (currentPlayer == 1 ? gameState.P1Pos : gameState.P2Pos)));
+        Vector2Int moveVec = (currentPlayer == 1 ? gameState.P1Pos : gameState.P2Pos) - newTilePos;
+        int moveIndex = gameState.GetMoveIndex(moveVec);
+        StartCoroutine(MakeMoveOnState(moveIndex));
 
         //update the GameState
         //if (gameState.MakeMove(newPlayerPos, currentPlayer)) //Returns true if legal an places move on board
@@ -195,13 +199,18 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            Vector2Int bestMove = aiPlayer.GetMove(gameState, 'x');//if minimax doesn't work yet, we will place the symbol in next available spot.
-            if (bestMove == null)
+            int bestMove = aiPlayer.GetMove(gameState, 'x');//if minimax doesn't work yet, we will place the symbol in next available spot.
+            while (!gameState.IsValidMove(gameState.GetMoveFromIndex(bestMove), 2))
+            {
+                bestMove = aiPlayer.GetMove(gameState, 'o');
+            }
+
+            if (bestMove == -1)
             {
                 Debug.LogError("ERROR: best move is null.");
             }
 
-            Debug.Log("AI moved -> " + bestMove.x + " " + bestMove.y);
+            Debug.Log("AI moved -> " + bestMove);
             StartCoroutine(MakeMoveOnState(bestMove));
         }
 
@@ -223,21 +232,26 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            Vector2Int bestMove = aiPlayer.GetMove(gameState, 'o');
+            int bestMove = aiPlayer.GetMove(gameState, 'o');
+            while (!gameState.IsValidMove(gameState.GetMoveFromIndex(bestMove), 2))
+            {
+                bestMove = aiPlayer.GetMove(gameState, 'o');
+            }
             //if minimax doesn't work yet, we will place the symbol in next available spot.
-            if (bestMove == null)
+            if (bestMove == -1)
             {
                 Debug.LogError("ERROR: best move is null.");
             }
 
-            Debug.Log("AI moved -> " + bestMove.x + " " + bestMove.y);
+
+            Debug.Log("AI moved -> " + bestMove);
             StartCoroutine(MakeMoveOnState(bestMove));
         }
 
 
     }
 
-    IEnumerator MakeMoveOnState(Vector2Int movePos)
+    IEnumerator MakeMoveOnState(int movePos)
     {
         gameState.MakeMove(movePos, currentPlayer);
 
@@ -250,7 +264,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            //gameBoard.UpdateBoard(gameState);
+            gameBoard.UpdateBoard(gameState);
             Debug.Log(gameState);
 
             gameSystem = currentPlayer == 1 ? GameSystem.PLAYER2TURN : GameSystem.PLAYER1TURN;

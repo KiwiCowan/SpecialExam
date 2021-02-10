@@ -6,29 +6,29 @@ public class Evaluator
 {
     public const int WIN_SCORE = 10000;
 
-    //public bool Evaluate(GameState gameState, out int score)
-    //{
-    //    score = 0;
+    public bool Evaluate(GameState gameState, out int score)
+    {
+        score = 0;
 
-    //    int[] scores = new int[2];
+        int[] scores = new int[2];
 
-    //    scores[0] += EvaluateEndGame(gameState);
-    //    //scores[1] += EvaluateMobility(gameState);
+        scores[0] += EvaluateEndGame(gameState);
+        scores[1] += EvaluateScore(gameState);
 
-    //    for (int i = 0; i < scores.Length; i++)
-    //    {
-    //        if (Mathf.Abs(scores[i]) == WIN_SCORE)
-    //        {
-    //            score = scores[i];
-    //            return true;
-    //        }
-    //        score += scores[i];
-    //    }
+        for (int i = 0; i < scores.Length; i++)
+        {
+            if (Mathf.Abs(scores[i]) == WIN_SCORE)
+            {
+                score = scores[i];
+                return true;
+            }
+            score += scores[i];
+        }
 
-    //    return false;
-    //}
+        return false;
+    }
 
-    public int Evaluate(GameState gameState)
+    int EvaluateScore(GameState gameState)
     {
         int score = 0;
         float xScore = 0;
@@ -146,69 +146,84 @@ public class Evaluator
         return score;
     }
 
-    //public int Evaluate(GameState gameState)
-    //{
-    //    int score = 0;
+    int EvaluateEndGame(GameState gameState)
+    {
+        int score = 0;
 
-    //    Debug.Log("Score Start : " +score);
+        Debug.Log("Score Start : " + score);
 
-    //    for (int h = 0; h < gameState.Board.GetLength(1); h++)
-    //    {
-    //        for (int w = 0; w < gameState.Board.GetLength(0); w++)
-    //        {
-    //            if (gameState.Board[w, h] == 'x')
-    //            {
-    //                score++;
-    //            }
+        for (int h = 0; h < gameState.Board.GetLength(1); h++)
+        {
+            for (int w = 0; w < gameState.Board.GetLength(0); w++)
+            {
+                if (gameState.Board[w, h] == 'x')
+                {
+                    score++;
+                }
 
-    //            if (gameState.Board[w, h] == 'X')
-    //            {
-    //                score += 2;
-    //            }
+                if (gameState.Board[w, h] == 'X')
+                {
+                    score += 2;
+                }
 
-    //            if (gameState.Board[w, h] == 'o')
-    //            {
-    //                score--;
-    //            }
+                if (gameState.Board[w, h] == 'o')
+                {
+                    score--;
+                }
 
-    //            if (gameState.Board[w, h] == 'O')
-    //            {
-    //                score -= 2;
-    //            }
-    //        }
-    //    }
-    //    Debug.Log("Score end: " + score);
+                if (gameState.Board[w, h] == 'O')
+                {
+                    score -= 2;
+                }
+            }
+        }
+        Debug.Log("Score end: " + score);
 
-    //    // find who won, loss or drawed
-    //    char outcomeChar = gameState.GetGameOutcome();
-    //    if (outcomeChar == 'x')
-    //    {
-    //        score = WIN_SCORE;
-    //    }
-    //    else if (outcomeChar == 'o')
-    //    {
-    //        score = -WIN_SCORE;
-    //    }
-    //    else if (outcomeChar == 'd')
-    //    {
-    //        score = 0;
-    //    }
-    //    return score;
+        //// find who won, loss or drawed
+        //char outcomeChar = gameState.GetGameOutcome();
+        //if (outcomeChar == 'x')
+        //{
+        //    score = WIN_SCORE;
+        //}
+        //else if (outcomeChar == 'o')
+        //{
+        //    score = -WIN_SCORE;
+        //}
+        //else if (outcomeChar == 'd')
+        //{
+        //    score = 0;
+        //}
+        //return score;
+        bool isGameOver =true;
+        for (int h = 0; h < gameState.Board.GetLength(1); h++)
+        {
+            for (int w = 0; w < gameState.Board.GetLength(0); w++)
+            {
+                if (gameState.Board[w, h] == '.')  // check if there are any empty tiles left 
+                {
+                    isGameOver = false;
+                }
+            }
+        }
 
-    //    //if (score > 0)  //check if X wins
-    //    //{
-    //    //    score = WIN_SCORE;
-    //    //}
-    //    //else if (p1Score < p2Score)                       //check if O wins
-    //    //{
-    //    //    outcome = 'o';
-    //    //}
-    //    //else if (p1Score == p2Score)  //check if its a draw
-    //    //{
-    //    //    score +=;
-    //    //}
-    //    //return 1;
-    //}
+        if(isGameOver)
+        {
+            if (score > 0)  //check if X wins
+            {
+                score = WIN_SCORE;
+            }
+            else if (score < 0)                       //check if O wins
+            {
+                score = WIN_SCORE;
+            }
+            else if (score == 0)  //check if its a draw
+            {
+                score = 0;
+            }
+        }
+       
+        return 0;
+    }
 
 
     //int EvaluateMobility(GameState gameState)

@@ -110,6 +110,7 @@ public class GameState
             Vector2Int newmove = curPlayerPos + Moves[i];
             if (IsValidMove(newmove, curPlayer) /*&& board[x, y] == enemyTile*/)    //Right
             {
+
                 possibleMoves.Add(Moves[i]);
             }
         }
@@ -139,6 +140,25 @@ public class GameState
         //{
         //    possibleMoves.Add(new Vector2Int(x, y - 1));
         //}
+
+        return possibleMoves;
+
+    }
+
+    public List<int> GetPossibleMovesIndexs(int curPlayer) // returns the int of Move[] indexs
+    {
+        List<int> possibleMoves = new List<int>();
+
+        Vector2Int curPlayerPos = curPlayer == 1 ? p1Pos : p2Pos;
+
+        for (int i = 0; i < Moves.Length; i++)
+        {
+            Vector2Int newmove = curPlayerPos + Moves[i];
+            if (IsValidMove(newmove, curPlayer) /*&& board[x, y] == enemyTile*/)    //Right
+            {
+                possibleMoves.Add(i);
+            }
+        }
 
         return possibleMoves;
 
@@ -245,7 +265,7 @@ public class GameState
 
             lastPlayerToMove = curPlayer;
             lastMove = movePos;
-            lastMoveIndex = GetMoveIndex(movePos);
+            //lastMoveIndex = GetMoveIndex(movePos);
 
 
             return true;
@@ -263,16 +283,16 @@ public class GameState
     {
         List<Vector2Int> xLegalMoves = GetPossibleMoves(1);
         List<Vector2Int> oLegalMoves = GetPossibleMoves(2);
-        if (xLegalMoves.Count > 0 && oLegalMoves.Count > 0)  // Check if playerX has any moves left (if they aren't traped by soild tiles)
+        if (xLegalMoves.Count >= 0 /*&& oLegalMoves.Count > 0*/)  // Check if playerX has any moves left (if they aren't traped by soild tiles)
         {
             return false;
         }
 
-        
-        //if (oLegalMoves.Count > 0)  // Check if playerO has any moves left (if they aren't traped by soild tiles)
-        //{
-        //    return false;
-        //}
+
+        if (oLegalMoves.Count >= 0)  // Check if playerO has any moves left (if they aren't traped by soild tiles)
+        {
+            return false;
+        }
 
         for (int h = 0; h < board.GetLength(1); h++)
         {
@@ -295,6 +315,7 @@ public class GameState
         char outcome;
         p1Score = 0;
         p2Score = 0;
+
 
         Debug.Log("Score Start - P1 score: " + p1Score + " P2 score: " + p2Score);
 

@@ -775,7 +775,7 @@ MonoBehaviour:
   width: 5
   height: 5
   gameUI: {fileID: 669345360}
-  opponentType: 2
+  opponentType: 0
   gameSystem: 0
   minimaxDepth: 5
   humanPlayerTurn: 0

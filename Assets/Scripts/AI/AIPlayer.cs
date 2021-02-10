@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class AIPlayer
 {
-    public abstract Vector2Int GetMove(GameState gameState, char player);
+    public abstract int GetMove(GameState gameState, char player);
 }

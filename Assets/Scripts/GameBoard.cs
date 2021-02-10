@@ -73,19 +73,11 @@ public class GameBoard : MonoBehaviour
         }
 
         string pMovesString = "Player " + gameState.CurrentPlayer + ": can move to ";
-        for (int i = 0; i < possibleMoves.Count-1; i++)
+        foreach (Vector2Int move in possibleMoves)
         {
-            Vector2Int newPossibleTile = gameState.GetTileFromIndex(i);
-
-            tiles[newPossibleTile.x, newPossibleTile.y].HighlightTile();
-            pMovesString += "(" + newPossibleTile.x + "," + newPossibleTile.y + ")" + "\n";
+            tiles[move.x, move.y].HighlightTile();
+            pMovesString += "(" + move.x + "," + move.y + ")" + "\n";
         }
-
-        //foreach (Vector2Int move in possibleMoves)
-        //{
-        //    tiles[move.x, move.y].HighlightTile();
-        //    pMovesString += "(" + move.x + "," + move.y + ")" + "\n";
-        //}
         Debug.Log(pMovesString);
         
         Vector2Int curPlayerPos = gameState.CurrentPlayer == 1 ? gameState.P1Pos : gameState.P2Pos;
